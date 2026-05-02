@@ -6,8 +6,12 @@
   "description": "Automatically places AWS SSO calls into containers.",
   "browser_specific_settings": {
     "gecko": {
-      "id": "{5c474add-03f0-4c67-9479-f32939d7599a}",
-      "strict_min_version": "91.0"
+      "id": "{3dd81d38-c56c-451a-87f6-f88b20293b48}",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": []
+      }
     }
   },
   "permissions": [

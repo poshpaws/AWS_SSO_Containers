@@ -11,7 +11,8 @@ function saveOptions(e) {
   browser.storage.sync.set({
     template: document.querySelector("#template").value,
     length: document.querySelector("#length").value || 0,
-    slug: document.querySelector("#slug").value
+    slug: document.querySelector("#slug").value,
+    region: document.querySelector("#region").value
   });
 }
 
@@ -33,9 +34,11 @@ function restoreOptions() {
     let text = result.template || "name role";
     let length = parseInt(result.length, 10);
     let slug = result.slug || "";
+    let region = result.region || "";
     document.querySelector("#template").value = text;
     document.querySelector("#length").value = length || 0;
     document.querySelector("#slug").value = slug;
+    document.querySelector("#region").value = region;
     populatePreview(text, length, slug);
   }
 
@@ -43,7 +46,7 @@ function restoreOptions() {
     console.log(`Error: ${error}`);
   }
 
-  let getting = browser.storage.sync.get(["template", "length", "slug"]);
+  let getting = browser.storage.sync.get(["template", "length", "slug", "region"]);
   getting.then(setCurrentChoice, onError);
 }
 

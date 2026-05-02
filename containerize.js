@@ -30,6 +30,7 @@ const availableContainerColors = [
 let containerNameTemplate = "name role";
 let containerNameLength = 0;
 let containerNameSlug = "";
+let defaultRegion = "";
 
 let accountMap = {};
 
@@ -140,13 +141,17 @@ function listener(details) {
           let destination = object.destination;
           if (!originDestination) {
             if (!object.destination) {
+              let baseConsole;
               if (object.signInFederationLocation.includes("amazonaws-us-gov.com")) {
-                destination = "https://console.amazonaws-us-gov.com";
+                baseConsole = "https://console.amazonaws-us-gov.com";
               } else if (object.signInFederationLocation.includes("amazonaws.cn")) {
-                destination = "https://console.amazonaws.cn";
+                baseConsole = "https://console.amazonaws.cn";
               } else {
-                destination = "https://console.aws.amazon.com";
+                baseConsole = "https://console.aws.amazon.com";
               }
+              destination = defaultRegion
+                ? baseConsole + "/console/home?region=" + defaultRegion
+                : baseConsole;
             }
           }
           else {
@@ -179,7 +184,7 @@ function listener(details) {
     };
   }
 
-  let getting = browser.storage.sync.get(["template", "length", "slug"]);
+  let getting = browser.storage.sync.get(["template", "length", "slug", "region"]);
   getting.then(process);
 
   return {};
@@ -326,7 +331,7 @@ async function samlListener(details) {
     await browser.tabs.remove(details.tabId);
   }
 
-  let getting = browser.storage.sync.get(["template", "length", "slug"]);
+  let getting = browser.storage.sync.get(["template", "length", "slug", "region"]);
   getting.then(process);
 
   return { cancel: true };
@@ -337,13 +342,14 @@ function onGot(item) {
   containerNameTemplate = item.template || "name role";
   containerNameLength = parseInt(item.length, 10) || 0;
   containerNameSlug = item.slug || "";
+  defaultRegion = item.region || "";
 }
 
 function onError(error) {
   console.log("No custom template for AWS SSO containers, using default");
 }
 
-let getting = browser.storage.sync.get(["template", "length", "slug"]);
+let getting = browser.storage.sync.get(["template", "length", "slug", "region"]);
 getting.then(onGot, onError);
 
 browser.webRequest.onBeforeRequest.addListener(
